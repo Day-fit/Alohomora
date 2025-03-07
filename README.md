@@ -17,7 +17,7 @@ To install and run Alohomora:
 
 1. **Clone the Repository**:
    ```bash
-   git clone [repository_url]
+   git clone https://github.com/Day-fit/Alohomora.git
    ```
 2. **Navigate to the Project Directory**:
    ```bash
@@ -29,7 +29,7 @@ To install and run Alohomora:
    ```
 4. **Run the io.github.dayfit.Application**:
    ```bash
-   java -jar target/alohomora.jar [options]
+   java -jar target/[Compiled jar name].jar [options]
    ```
 
 *Note: Ensure you have Maven and a Java Runtime Environment (JRE) installed.*
