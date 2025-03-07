@@ -1,3 +1,5 @@
+package io.github.dayfit;
+
 public class Application {
     public static void main(String[] args) {
 

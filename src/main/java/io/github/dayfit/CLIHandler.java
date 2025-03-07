@@ -1,3 +1,5 @@
+package io.github.dayfit;
+
 import javax.crypto.BadPaddingException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,10 +10,11 @@ public class CLIHandler {
     final String BAD_PASSWORD_TEXT = "Given password is incorrect or file is broken.";
     final String ERROR_TEXT = "Something went wrong!";
     final String NO_SUCH_ARGUMENT = "No such argument, please try -h argument for help";
-    final String HELP_TEXT = "Usage: java -jar alohomora.jar [argument=(value)]" +
-                             "\t-h - provide a help message."+
-                             "\t-e=[path] - encrypt a directory or file"+
-                             "\t-d=[path] - decrypt a directory or file";
+    final String HELP_TEXT = """
+            Usage: java -jar alohomora.jar [argument=(value)]\s
+            \t-h - provide a help message.
+            \t-e=[path] - encrypt a directory or file
+            \t-d=[path] - decrypt a directory or file""";
 
     public CLIHandler(String[] args) throws FileNotFoundException {
 
@@ -29,7 +32,15 @@ public class CLIHandler {
 
                 try
                 {
-                    Encryptor.decrypt(targetFile, askAPassword());
+                    if (!targetFile.isDirectory())
+                    {
+                        Encryptor.decrypt(targetFile, askAPassword());
+                    }
+
+                    else
+                    {
+                        Encryptor.decryptDirectory(targetFile, askAPassword());
+                    }
                 }
 
                 catch (BadPaddingException e)
