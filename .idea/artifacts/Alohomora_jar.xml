@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Alohomora:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Alohomora_jar</output-path>
+    <root id="archive" name="Alohomora.jar">
+      <element id="module-output" name="Alohomora" />
+    </root>
+  </artifact>
+</component>
