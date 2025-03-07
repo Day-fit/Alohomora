@@ -68,4 +68,4 @@ Currently, we are not accepting external contributions. Future updates will prov
 
 ## Contact & Support
 
-If you encounter any issues or have suggestions, please open an issue on our GitHub repository. For direct contact information, visit the "About Me" website on my GitHub profile.
+If you encounter any issues or have suggestions, please open an issue on our GitHub repository. For direct contact information, visit the [About Me](https://day-fit.github.io) website on my GitHub profile.
