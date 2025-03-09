@@ -32,7 +32,7 @@ To install and run Alohomora:
    java -jar target/[Compiled jar name].jar [options]
    ```
 
-*Note: Ensure you have Maven and a Java Runtime Environment (JRE) installed.*
+*Note: Ensure you have [Prerequisites](#prerequisites) installed.*
 
 ## Usage
 
