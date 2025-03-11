@@ -66,7 +66,7 @@ class JSONTest {
     @Test
     void saveJSON_withInvalidFilePath_doesNotCreateFile() {
         String jsonContent = "{\"name\":\"test\",\"value\":123}";
-        Path invalidPath = Path.of("Z:\\nonExistingDirectory\\saveJSONTest.json");
+        Path invalidPath = Path.of("Z:\\nonExistingDirectory\\nonExistingDirectory\\saveJSONTest.json");
 
         assertThrows(NoSuchFileException.class, () -> JSON.saveJSON(jsonContent, invalidPath));
         assertFalse(Files.exists(invalidPath));
