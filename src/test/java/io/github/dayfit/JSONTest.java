@@ -56,9 +56,12 @@ class JSONTest {
         String jsonContent = "{\"name\":\"test\",\"value\":123}";
         Path tempFile = Files.createTempFile("saveJSONTest", ".json");
         Files.deleteIfExists(tempFile);
+
         JSON.saveJSON(jsonContent, tempFile);
         assertTrue(Files.exists(tempFile));
+
         String fileContent = Files.readString(tempFile);
+
         assertEquals(jsonContent, fileContent);
         Files.deleteIfExists(tempFile);
     }
