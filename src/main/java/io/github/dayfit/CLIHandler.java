@@ -1,106 +1,183 @@
 package io.github.dayfit;
 
 import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class CLIHandler {
+    private final PathManager pathManager;
+
     final String PROVIDE_A_PASSWORD_TEXT = "Please enter your password: ";
     final String BAD_PASSWORD_TEXT = "Given password is incorrect or file is broken.";
+    final String FILE_NOT_FOUND_TEXT = "No such a file found";
     final String ERROR_TEXT = "Something went wrong!";
     final String NO_SUCH_ARGUMENT = "No such argument, please try -h argument for help";
     final String HELP_TEXT = """
             Usage: java -jar alohomora.jar [argument=(value)]\s
             \t-h - provide a help message.
             \t-e=[path] - encrypt a directory or file
-            \t-d=[path] - decrypt a directory or file""";
+            \t-d=[path] - decrypt a directory or file
+            \t-a=[path] - add a path to the protected paths list
+            \t-r=[path] - remove a path from the protected paths list""";
 
-    public CLIHandler(String[] args) throws FileNotFoundException {
+    public CLIHandler(String[] args, PathManager pathManager) {
 
-        for (String arg : args)
+        this.pathManager = pathManager;
+
+        List<String> arguments = new ArrayList<>(Arrays.asList(args));
+
+
+
+        for (String rawArgument : arguments)
         {
-            if (arg.startsWith("-d="))
-            {
-                String path = arg.substring(3);
-                File targetFile = new File(path);
+            String arg = rawArgument.substring(0, Math.min(rawArgument.length(), 3));
 
-                if (!targetFile.exists())
-                {
-                    throw new FileNotFoundException("No such a file found");
-                }
+            switch (arg) {
+                case "-h", "":
+                    System.out.println(HELP_TEXT);
+                    break;
 
-                try
-                {
-                    if (!targetFile.isDirectory())
-                    {
-                        Encryptor.decrypt(targetFile, askAPassword());
+                case "-p":
+                    try {
+                        handleProtectedPaths(false);
+                    } catch (FileNotFoundException e){
+                        System.out.println(FILE_NOT_FOUND_TEXT);
+                    } catch (BadPaddingException e) {
+                        System.out.println(BAD_PASSWORD_TEXT);
+                    } catch (Exception e) {
+                        System.out.println(ERROR_TEXT + "\n" + e.getMessage());
                     }
+                    break;
 
-                    else
-                    {
-                        Encryptor.decryptDirectory(targetFile, askAPassword());
+                case "-o":
+                    try {
+                        handleProtectedPaths(true);
+                    }catch (FileNotFoundException e) {
+                        System.out.println(FILE_NOT_FOUND_TEXT);
+                    } catch (Exception e) {
+                        System.out.println(ERROR_TEXT + "\n" + e.getMessage());
                     }
-                }
+                    break;
 
-                catch (BadPaddingException e)
-                {
-                    System.out.println(BAD_PASSWORD_TEXT);
-                }
+                case "-d=":
+                    String decryptPath = rawArgument.substring(3);
 
-                catch (Exception e)
-                {
-                    System.out.println(ERROR_TEXT);
-                }
-            }
-
-            else if (arg.startsWith("-e=")) {
-                String path = arg.substring(3);
-                File targetFile = new File(path);
-
-                if (!targetFile.exists())
-                {
-                    throw new FileNotFoundException("No such a file found");
-                }
-
-                try
-                {
-                    if (!targetFile.isDirectory())
-                    {
-                        Encryptor.encrypt(targetFile, askAPassword());
+                    try {
+                        handleEncryptionDecryption(decryptPath, false);
+                    } catch (FileNotFoundException e) {
+                        System.out.println(FILE_NOT_FOUND_TEXT);
                     }
+                    break;
 
-                    else
-                    {
-                        Encryptor.encryptDirectory(targetFile, askAPassword());
+                case "-e=":
+                    String encryptPath = rawArgument.substring(3);
+
+                    try {
+                        handleEncryptionDecryption(encryptPath, true);
+                    } catch (FileNotFoundException e) {
+                        System.out.println(FILE_NOT_FOUND_TEXT);
                     }
-                }
+                    break;
 
-                catch (Exception e)
-                {
-                    System.out.println(ERROR_TEXT);
-                }
-            }
+                case "-a=":
+                    String addPath = rawArgument.substring(3);
+                    pathManager.addProtectedPath(Path.of(addPath));
+                    break;
 
-            else if (arg.startsWith("-h"))
-            {
-                System.out.println(HELP_TEXT);
-            }
+                case "-r=":
+                    String removePath = rawArgument.substring(3);
+                    pathManager.removeProtectedPath(Path.of(removePath));
+                    break;
 
-            else
-            {
-                System.out.println(NO_SUCH_ARGUMENT);
+                case "-vp":
+                    System.out.println(pathManager.getProtectedPaths().toString());
+                    break;
+
+                default:
+                    System.out.println(NO_SUCH_ARGUMENT);
+                    break;
             }
         }
     }
 
-    private String askAPassword()
+    private void handleEncryptionDecryption (String path,boolean isEncryption) throws FileNotFoundException {
+        File targetFile = new File(path);
+
+        if (!targetFile.exists()) {
+            throw new FileNotFoundException("No such a file found");
+        }
+
+        try {
+            if (!targetFile.isDirectory()) {
+                if (isEncryption) {
+                    Encryptor.encrypt(targetFile, askAPassword());
+                } else {
+                    Encryptor.decrypt(targetFile, askAPassword());
+                }
+            } else {
+
+                if (isEncryption) {
+                    Encryptor.encryptDirectory(targetFile, askAPassword());
+                } else {
+                    Encryptor.decryptDirectory(targetFile, askAPassword());
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException(e.getMessage());
+        } catch (BadPaddingException e) {
+            System.out.println(BAD_PASSWORD_TEXT);
+        } catch (Exception e) {
+            System.out.println(ERROR_TEXT + "\n" + e.getMessage());
+        }
+    }
+
+    private String askAPassword ()
     {
         System.out.print(PROVIDE_A_PASSWORD_TEXT);
         Scanner scanner = new Scanner(System.in);
-        String password = scanner.nextLine();
-        scanner.close();
 
-        return password;
+        return scanner.nextLine();
+    }
+
+    private void handleProtectedPaths(boolean encryption) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
+        String password = askAPassword();
+
+        for (Path path : pathManager.getProtectedPaths())
+        {
+            if (encryption)
+            {
+                if (path.toFile().isDirectory())
+                {
+                    Encryptor.encryptDirectory(path.toFile(), password);
+                }
+                else
+                {
+                    Encryptor.encrypt(path.toFile(), password);
+                }
+            }
+
+            else
+            {
+                if (path.toFile().isDirectory())
+                {
+                    Encryptor.decryptDirectory(path.toFile(), password);
+                }
+
+                else
+                {
+                    Encryptor.decrypt(path.toFile(), password);
+                }
+            }
+        }
     }
 }

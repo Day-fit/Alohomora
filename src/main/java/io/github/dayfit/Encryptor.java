@@ -29,33 +29,41 @@ public class Encryptor {
      *
      * @param inputFile the file to be encrypted
      * @param password  the password used for encryption
-     * @throws NoSuchPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws NoSuchAlgorithmException
-     * @throws IOException
-     * @throws BadPaddingException
-     * @throws InvalidKeyException
+     * @throws NoSuchPaddingException if the specified padding mechanism is not available
+     * @throws IllegalBlockSizeException if the provided data is not a multiple of the block size
+     * @throws NoSuchAlgorithmException if the specified algorithm is not available
+     * @throws IOException if an I/O error occurs
+     * @throws BadPaddingException if the padding of the data does not match the expected padding
+     * @throws InvalidKeyException if the given key is invalid
      */
     public static void encrypt(File inputFile, String password) throws NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, IOException, BadPaddingException, InvalidKeyException {
         encrypt(inputFile, inputFile, password);
     }
 
     /**
-     * Encrypts a file and writes the encrypted data to the specified output file.
-     *
-     * @param inputFile  the file to be encrypted
-     * @param outputFile the file to write the encrypted data to
-     * @param password   the password used for encryption
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws IOException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
-     */
+      * Encrypts a file and writes the encrypted data to the specified output file.
+      * This method uses the AES algorithm to encrypt the contents of the input file
+      * and writes the encrypted data to the output file. The encryption is performed
+      * using the specified password, which is converted into a SecretKey.
+      *
+      * @param inputFile  the file to be encrypted
+      * @param outputFile the file to write the encrypted data to
+      * @param password   the password used for encryption
+      * @throws NoSuchPaddingException if the specified padding mechanism is not available
+      * @throws NoSuchAlgorithmException if the specified algorithm is not available
+      * @throws InvalidKeyException if the given key is invalid
+      * @throws IOException if an I/O error occurs
+      * @throws IllegalBlockSizeException if the provided data is not a multiple of the block size
+      * @throws BadPaddingException if the padding of the data does not match the expected padding
+      */
     public static void encrypt(File inputFile, File outputFile, String password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, getKeyFromPassword(password));
+
+        if (!inputFile.exists())
+        {
+            throw new FileNotFoundException(inputFile.getAbsolutePath() + " does not exist");
+        }
 
         if (!outputFile.exists()) {
             if (!outputFile.createNewFile()) {
@@ -122,12 +130,12 @@ public class Encryptor {
      *
      * @param inputFile the file to be decrypted
      * @param password  the password used for decryption
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws IOException
-     * @throws IllegalBlockSizeException
-     * @throws BadPaddingException
+     * @throws NoSuchPaddingException if the specified padding mechanism is not available
+     * @throws NoSuchAlgorithmException if the specified algorithm is not available
+     * @throws InvalidKeyException if the given key is invalid
+     * @throws IOException if an I/O error occurs
+     * @throws IllegalBlockSizeException if the provided data is not a multiple of the block size
+     * @throws BadPaddingException if the padding of the data does not match the expected padding
      */
     public static void decrypt(File inputFile, String password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException, BadPaddingException {
         decrypt(inputFile, inputFile, password);
@@ -135,20 +143,28 @@ public class Encryptor {
 
     /**
      * Decrypts a file and writes the decrypted data to the specified output file.
+     * This method uses the AES algorithm to decrypt the contents of the input file
+     * and writes the decrypted data to the output file. The decryption is performed
+     * using the specified password, which is converted into a SecretKey.
      *
      * @param inputFile  the file to be decrypted
      * @param outputFile the file to write the decrypted data to
      * @param password   the password used for decryption
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws IOException
+     * @throws NoSuchPaddingException if the specified padding mechanism is not available
+     * @throws NoSuchAlgorithmException if the specified algorithm is not available
+     * @throws InvalidKeyException if the given key is invalid
+     * @throws BadPaddingException if the padding of the data does not match the expected padding
+     * @throws IllegalBlockSizeException if the provided data is not a multiple of the block size
+     * @throws IOException if an I/O error occurs
      */
     public static void decrypt(File inputFile, File outputFile, String password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, IOException {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, getKeyFromPassword(password));
+
+        if (!inputFile.exists())
+        {
+            throw new FileNotFoundException(inputFile.getAbsolutePath() + " does not exist");
+        }
 
         if (!outputFile.exists()) {
             if (!outputFile.createNewFile()) {
@@ -218,7 +234,7 @@ public class Encryptor {
      *
      * @param password the password used to generate the key
      * @return the generated SecretKey
-     * @throws NoSuchAlgorithmException
+     * @throws NoSuchAlgorithmException if the specified algorithm is not available
      */
     private static SecretKey getKeyFromPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest sha = MessageDigest.getInstance("SHA-256");

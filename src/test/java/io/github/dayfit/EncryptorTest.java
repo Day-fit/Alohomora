@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import javax.crypto.BadPaddingException;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -166,8 +167,8 @@ class EncryptorTest {
 
         assertTrue(tempFile1.exists());
         assertTrue(tempFile2.exists());
-        assertNotEquals(inputData1.length(), tempFile1.length());
-        assertNotEquals(inputData2.length(), tempFile2.length());
+        assertFalse(Arrays.equals(inputData1.getBytes(), Files.readAllBytes(tempFile1.toPath())));
+        assertFalse(Arrays.equals(inputData2.getBytes(), Files.readAllBytes(tempFile2.toPath())));
     }
 
     @Test

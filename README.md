@@ -25,7 +25,7 @@ To install and run Alohomora:
    ```
 3. **Build the Project Using Maven**:
    ```bash
-   mvn clean install
+   mvn clean package assembly:single
    ```
 4. **Run the io.github.dayfit.Application**:
    ```bash
@@ -46,11 +46,11 @@ Run the application with the appropriate arguments:
 
 - To encrypt a directory:
   ```bash
-  java -jar target/alohomora.jar -e=/path/to/directory
+  java -jar target/alohomora.jar -e="/path/to/directory"
   ```
 - To decrypt a file:
   ```bash
-  java -jar target/alohomora.jar -d=/path/to/file
+  java -jar target/alohomora.jar -d="/path/to/file"
   ```
 
 ## Prerequisites
