@@ -67,17 +67,15 @@ class JSONTest {
     }
 
     @Test
-    void saveJSON_withInvalidFilePath_doesNotCreateFile() {
+    void saveJSON_withInvalidFilePath_doesNotCreateFile() throws IOException {
         String jsonContent = "{\"name\":\"test\",\"value\":123}";
-        Path invalidPath = Path.of("Z:\\nonExistingDirectory\\nonExistingDirectory\\saveJSONTest.json");
+
+        Path tempDir = Files.createTempDirectory("tempDir");
+        Files.deleteIfExists(tempDir);
+
+        Path invalidPath = tempDir.resolve("nonExistingDirectory").resolve("saveJSONTest.json");
 
         assertThrows(NoSuchFileException.class, () -> JSON.saveJSON(jsonContent, invalidPath));
         assertFalse(Files.exists(invalidPath));
-
-        try {
-            Files.deleteIfExists(invalidPath);
-        }
-        catch (IOException ignored) {
-        }
     }
 }
