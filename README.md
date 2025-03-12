@@ -55,7 +55,7 @@ Run the application with the appropriate arguments:
 
 ## Prerequisites
 
-- Java Runtime Environment (JRE)
+- Java Development Kit (JDK 23)
 - Maven (for building the project)
 
 ## License
