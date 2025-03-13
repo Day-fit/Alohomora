@@ -20,13 +20,19 @@ To install and run Alohomora:
    ```
 2. **Navigate to the Project Directory**:
    ```bash
+   cd Alohomora
+   ```
+    if this don't work try:
+
+   ```bash
    cd alohomora
    ```
-3. **Build the Project Using Maven**:
+   
+4. **Build the Project Using Maven**:
    ```bash
    mvn clean package
    ```
-4. **Run the io.github.dayfit.Application**:
+5. **Run the io.github.dayfit.Application**:
    ```bash
    java -jar target/Alohomora-0.2-jar-with-dependencies.jar [options]
    ```
