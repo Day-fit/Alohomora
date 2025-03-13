@@ -7,8 +7,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
 - **Encrypt Files or Directories**: Secure your sensitive data by encrypting individual files or entire directories.
 - **Decrypt Files or Directories**: Access your protected data by decrypting previously secured files or directories.
 - **Planned Features**:
-    - Batch decryption of selected paths after password authentication.
-    - Automatic re-encryption upon closing the device or using a specific command.
+    - Automatic re-encryption upon closing the device.
     - Enhanced security measures, including improved hashing algorithms and salted hashes.
 
 ## Installation
@@ -21,15 +20,15 @@ To install and run Alohomora:
    ```
 2. **Navigate to the Project Directory**:
    ```bash
-   cd [repository_name]
+   cd alohomora
    ```
 3. **Build the Project Using Maven**:
    ```bash
-   mvn clean package assembly:single
+   mvn clean package
    ```
 4. **Run the io.github.dayfit.Application**:
    ```bash
-   java -jar target/[Compiled jar name].jar [options]
+   java -jar target/Alohomora-0.2-jar-with-dependencies.jar [options]
    ```
 
 *Note: Ensure you have [Prerequisites](#prerequisites) installed.*
@@ -39,8 +38,13 @@ To install and run Alohomora:
 Run the application with the appropriate arguments:
 
 - `-h`: Display help information.
-- `-e=path`: Encrypt the specified file or directory.
-- `-d=path`: Decrypt the specified file or directory.
+- `-e="path"`: Encrypt the specified file or directory.
+- `-d="path"`: Decrypt the specified file or directory.
+- `-r="path"` Remove protected path.
+- `-a="path"` Add new protected path.
+- `-p`: Decrypt all the protected paths.
+- `-o`: Encrypt all the protected paths.
+- `-vp` Display all the protected paths.
 
 **Examples**:
 
@@ -60,7 +64,7 @@ Run the application with the appropriate arguments:
 
 ## License
 
-Alohomora is licensed under the BSD 3-Clause License. This permissive license allows for redistribution and use in source and binary forms, with or without modification, under certain conditions. For more details, see the [LICENSE](https://opensource.org/license/bsd-3-clause) file.
+Alohomora is licensed under the BSD 3-Clause License. This permissive license allows for redistribution and use in source and binary forms, with or without modification, under certain conditions. For more details, see the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause).
 
 ## Contributing
 
