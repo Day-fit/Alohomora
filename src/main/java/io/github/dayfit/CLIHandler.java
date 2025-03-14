@@ -28,7 +28,12 @@ public class CLIHandler {
             \t-e=[path] - encrypt a directory or file
             \t-d=[path] - decrypt a directory or file
             \t-a=[path] - add a path to the protected paths list
-            \t-r=[path] - remove a path from the protected paths list""";
+            \t-r=[path] - remove a path from the protected paths list
+            \t-p - decrypt the protected paths list
+            \t-o - encrypt the protected paths list
+            \t-vp - view the protected paths list""";
+
+    String protectedPathsPassword;
 
     public CLIHandler(String[] args, PathManager pathManager) {
 
@@ -125,7 +130,6 @@ public class CLIHandler {
                     Encryptor.decrypt(targetFile, askAPassword());
                 }
             } else {
-
                 if (isEncryption) {
                     Encryptor.encryptDirectory(targetFile, askAPassword());
                 } else {
@@ -150,32 +154,27 @@ public class CLIHandler {
     }
 
     private void handleProtectedPaths(boolean encryption) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        String password = askAPassword();
-
-        for (Path path : pathManager.getProtectedPaths())
+        if (encryption)
         {
-            if (encryption)
-            {
-                if (path.toFile().isDirectory())
-                {
-                    Encryptor.encryptDirectory(path.toFile(), password);
-                }
-                else
-                {
-                    Encryptor.encrypt(path.toFile(), password);
+            this.protectedPathsPassword = askAPassword();
+        }
+
+        for (Path path : pathManager.getProtectedPaths()) {
+            if (encryption) {
+                if (path.toFile().isDirectory()) {
+                    Encryptor.encryptDirectory(path.toFile(), this.protectedPathsPassword);
+                } else {
+                    Encryptor.encrypt(path.toFile(), this.protectedPathsPassword);
                 }
             }
 
-            else
-            {
+            else {
                 if (path.toFile().isDirectory())
                 {
-                    Encryptor.decryptDirectory(path.toFile(), password);
+                    Encryptor.decryptDirectory(path.toFile(), this.protectedPathsPassword);
                 }
-
-                else
-                {
-                    Encryptor.decrypt(path.toFile(), password);
+                else {
+                    Encryptor.decrypt(path.toFile(), this.protectedPathsPassword);
                 }
             }
         }

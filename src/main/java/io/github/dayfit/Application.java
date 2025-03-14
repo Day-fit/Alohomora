@@ -23,7 +23,7 @@ public class Application {
                 pathManager.setProtectedPaths(protectedPaths);
             }
         }catch (NoSuchFileException e) {
-            System.out.println("No protected paths found");
+            System.out.println("[WARNING]: No protected paths file has been found");
         }
 
         new CLIHandler(args, pathManager);
