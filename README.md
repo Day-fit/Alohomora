@@ -6,7 +6,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
 
 - Encrypt Files or Directories: Secure your sensitive data by encrypting individual files or entire directories.
 - Decrypt Files or Directories: Access your protected data by decrypting previously secured files or directories.
-- Planned Features:
+- **Planned Features**:
     - Enhanced security measures, including improved hashing algorithms and salted hashes.
 
 ## Installation
@@ -21,8 +21,8 @@ Alohomora is a Java-based application designed to help you manage your files by 
    cd Alohomora
    ```
 
-   If this doesn't work, try:
-3. ```bash
+3. If this doesn't work, try:
+   ```bash
    cd alohomora
    ```
 
@@ -33,7 +33,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
 
 4. Run the Application:
    ```bash
-    java -jar target/Alohomora-0.2-jar-with-dependencies.jar [options]
+    java -jar target/Alohomora-0.3-jar-with-dependencies.jar [options]
     ```
    
    Make sure you have the [Prerequisites](#prerequisites) installed.
