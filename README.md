@@ -9,7 +9,15 @@ Alohomora is a Java-based application designed to help you manage your files by 
 - **Planned Features**:
     - Enhanced security measures, including improved hashing algorithms and salted hashes.
 
-## Installation
+## Instalation (from releases)
+1. Look for the **latest release** at [releases](https://github.com/Day-fit/Alohomora/releases), and download the jar file
+2. Run the Application:
+   ```bash
+    java -jar target/Alohomora-0.3-jar-with-dependencies.jar [options]
+    ```
+   Make sure you have the [Prerequisites](#prerequisites) installed.
+
+## Installation (from the source code)
 
 1. Clone the Repository:
    ```bash
@@ -30,7 +38,6 @@ Alohomora is a Java-based application designed to help you manage your files by 
    ```bash
    mvn clean package
     ```
-
 4. Run the Application:
    ```bash
     java -jar target/Alohomora-0.3-jar-with-dependencies.jar [options]
