@@ -13,7 +13,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
 1. Look for the **latest release** at [releases](https://github.com/Day-fit/Alohomora/releases), and download the jar file
 2. Run the Application:
    ```bash
-    java -jar target/Alohomora-0.3-jar-with-dependencies.jar [options]
+    java -jar target/Alohomora-[version].jar [options]
     ```
    Make sure you have the [Prerequisites](#prerequisites) installed.
 
@@ -40,7 +40,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
     ```
 4. Run the Application:
    ```bash
-    java -jar target/Alohomora-0.3-jar-with-dependencies.jar [options]
+    java -jar target/Alohomora-{version}-jar-with-dependencies.jar [options]
     ```
    
    Make sure you have the [Prerequisites](#prerequisites) installed.
