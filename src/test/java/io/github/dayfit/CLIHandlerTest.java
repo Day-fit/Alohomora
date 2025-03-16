@@ -186,7 +186,7 @@ class CLIHandlerTest {
 
         System.setOut(old);
 
-        assertEquals(cliHandler.NO_SUCH_ARGUMENT, outputStream.toString().trim());
+        assertEquals(cliHandler.NO_SUCH_ARGUMENT + " [argument="+args[0]+"]", outputStream.toString().trim());
     }
 
     @Test
@@ -206,12 +206,14 @@ class CLIHandlerTest {
     }
 
     @Test
-    void CLIHandlerWithAddProtectedPathArgumentAddsPath() {
-        String[] args = {"-a=protectedPath"};
+    void CLIHandlerWithAddProtectedPathArgumentAddsPath() throws IOException {
+        String[] args = {"-a=\"testDir\""};
+        File tempDir = Files.createFile(Path.of("testDir")).toFile();
+        tempDir.deleteOnExit();
 
         new CLIHandler(args, pathManager);
 
-        assertTrue(pathManager.getProtectedPaths().contains(Path.of("protectedPath")));
+        assertTrue(pathManager.getProtectedPaths().contains("testDir"));
     }
 
     @Test
@@ -226,7 +228,7 @@ class CLIHandlerTest {
     void CLIHandlerWithShowProtectedPathArgumentShowsPath()
     {
         String[] args = {"-vp"};
-        pathManager.addProtectedPath(Path.of("protectedPathTest"));
+        pathManager.addProtectedPath("protectedPathTest");
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
@@ -243,9 +245,11 @@ class CLIHandlerTest {
     void CLIHandlerWithValidProtectedPathsArgumentDecryptsPaths() throws Exception {
         File file1 = Files.createTempFile("file1", ".txt").toFile();
         File file2 = Files.createTempFile("file2", ".txt").toFile();
+        file1.deleteOnExit();
+        file2.deleteOnExit();
 
-        pathManager.addProtectedPath(file1.toPath());
-        pathManager.addProtectedPath(file2.toPath());
+        pathManager.addProtectedPath(file1.getPath());
+        pathManager.addProtectedPath(file2.getPath());
 
         String[] args = {"-p"};
         String password = "securePassword123";
@@ -261,26 +265,31 @@ class CLIHandlerTest {
         InputStream passwordInputStream = new ByteArrayInputStream(password.getBytes());
         InputStream originalInputStream = System.in;
 
-        System.setIn(passwordInputStream);
-        new CLIHandler(args, pathManager);
-        System.setIn(originalInputStream);
+        try {
+            System.setIn(passwordInputStream);
+            new CLIHandler(args, pathManager);
+        } finally {
+            System.setIn(originalInputStream);
+        }
 
         assertTrue(file1.exists());
         assertTrue(file2.exists());
 
-        assertEquals(inputData1, Files.readString(file1.toPath()));
-        assertEquals(inputData2, Files.readString(file2.toPath()));
+        assertEquals(inputData1, Files.readString(file1.toPath()).trim());
+        assertEquals(inputData2, Files.readString(file2.toPath()).trim());
     }
 
     @Test
     void CLIHandlerWithValidProtectedPathsArgumentEncryptsPaths() throws Exception {
         File tempFile1 = Files.createTempFile("file1", ".txt").toFile();
         File tempFile2 = Files.createTempFile("file2", ".txt").toFile();
+        tempFile1.deleteOnExit();
+        tempFile2.deleteOnExit();
 
-        pathManager.addProtectedPath(tempFile1.toPath());
-        pathManager.addProtectedPath(tempFile2.toPath());
+        pathManager.addProtectedPath(tempFile1.getPath());
+        pathManager.addProtectedPath(tempFile2.getPath());
 
-        String[] args = {"-o"};
+        String[] args = {"-c"};
         String password = "securePassword123";
         String inputData1 = "Here is first test text";
         String inputData2 = "And here is second test text";
@@ -291,9 +300,12 @@ class CLIHandlerTest {
         InputStream passwordInputStream = new ByteArrayInputStream(password.getBytes());
         InputStream originalInputStream = System.in;
 
-        System.setIn(passwordInputStream);
-        new CLIHandler(args, pathManager);
-        System.setIn(originalInputStream);
+        try {
+            System.setIn(passwordInputStream);
+            new CLIHandler(args, pathManager, true);
+        } finally {
+            System.setIn(originalInputStream);
+        }
 
         assertFalse(Arrays.equals(inputData1.getBytes(), Files.readAllBytes(tempFile1.toPath())));
         assertFalse(Arrays.equals(inputData2.getBytes(), Files.readAllBytes(tempFile2.toPath())));
