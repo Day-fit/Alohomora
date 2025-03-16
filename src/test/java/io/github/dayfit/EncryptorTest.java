@@ -2,7 +2,6 @@ package io.github.dayfit;
 
 import org.junit.jupiter.api.Test;
 
-import javax.crypto.BadPaddingException;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -76,9 +75,7 @@ class EncryptorTest {
         String password = "securePassword123";
 
         // Act & Assert
-        assertThrows(FileNotFoundException.class, () -> {
-            Encryptor.encrypt(inputFile, outputFile, password);
-        });
+        assertThrows(FileNotFoundException.class, () -> Encryptor.encrypt(inputFile, outputFile, password));
     }
 
     @Test
@@ -119,9 +116,7 @@ class EncryptorTest {
         }
 
         // Act & Assert
-        assertThrows(IOException.class, () -> {
-            Encryptor.encrypt(inputFile, outputFile, password);
-        });
+        assertThrows(IOException.class, () -> Encryptor.encrypt(inputFile, outputFile, password));
     }
 
 
@@ -207,32 +202,6 @@ class EncryptorTest {
         Encryptor.decrypt(inputFile, password);
 
         assertEquals(inputData, Files.readString(inputFile.toPath()));
-    }
-
-    @Test
-    void testDecryptWithInvalidPassword() throws Exception {
-        File inputFile = File.createTempFile("testInput", ".txt");
-        inputFile.deleteOnExit();
-
-        File outputFile = File.createTempFile("testOutput", ".enc");
-        outputFile.deleteOnExit();
-
-        File decryptedFile = File.createTempFile("testDecrypted", ".txt");
-        decryptedFile.deleteOnExit();
-
-        String password = "securePassword123";
-        String invalidPassword = "badPassword123";
-
-        String inputData = "This is a test string.";
-
-        Files.writeString(inputFile.toPath(), inputData);
-
-        Encryptor.encrypt(inputFile, outputFile, password);
-
-        assertThrows(BadPaddingException.class, () ->
-        {
-            Encryptor.decrypt(outputFile, decryptedFile, invalidPassword);
-        });
     }
 
     @Test

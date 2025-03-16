@@ -1,36 +1,33 @@
 package io.github.dayfit;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PathManager {
-    private List<Path> protectedPaths = new ArrayList<>();
+    private Set<String> protectedPaths = new HashSet<>();
     final String PATH_MANAGER_FILE = "protectedPaths.json";
 
     PathManager(){
     }
 
-    public List<Path> getProtectedPaths() {
+    public Set<String> getProtectedPaths() {
         return protectedPaths;
     }
 
-    public void setProtectedPaths(List<Path> protectedPaths)
-    {
+    public void setProtectedPaths(HashSet<String> protectedPaths) {
         this.protectedPaths = protectedPaths;
     }
 
-    public void addProtectedPath(Path protectedPaths) {
-        this.protectedPaths.add(protectedPaths);
+    public void addProtectedPath(String protectedPath) {
+        this.protectedPaths.add(protectedPath);
     }
 
-    public void removeProtectedPath(Path protectedPaths)
-    {
-        this.protectedPaths.remove(protectedPaths);
+    public void removeProtectedPath(String protectedPath) {
+        this.protectedPaths.remove(protectedPath);
     }
 
     public void saveProtectedPaths() throws IOException {
-        Path path = Path.of(PATH_MANAGER_FILE);
-        JSON.saveJSON(JSON.toJSON(this.protectedPaths), path);
+        JSON.saveJSON(JSON.toJSON(this.protectedPaths), Path.of(PATH_MANAGER_FILE));
     }
 }

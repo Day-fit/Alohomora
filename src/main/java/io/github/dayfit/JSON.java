@@ -25,8 +25,7 @@ public class JSON {
     }
 
     public static void saveJSON(String json, Path path) throws IOException {
-        if (!Files.exists(path.getParent()))
-        {
+        if (path.getParent() != null && !Files.exists(path.getParent())) {
             throw new NoSuchFileException("No such file or directory");
         }
         Files.write(path, json.getBytes());
