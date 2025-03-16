@@ -99,17 +99,17 @@ public class CLIHandler {
                     break;
 
                 case "-c":
-                    try {
-                        handleProtectedPaths(true);
-                    } catch (FileNotFoundException e) {
-                        System.out.println(FILE_NOT_FOUND_TEXT);
-                    } catch (Exception e) {
-                        System.out.println(ERROR_TEXT + "\n" + e.getMessage());
-                    }
-
                     if (!this.isTested)
                     {
                         System.exit(0);
+                    } else
+                    {
+                        try {
+                            handleProtectedPaths(true);
+                        } catch (Exception e)
+                        {
+                            System.out.println(ERROR_TEXT + "\n" + e.getMessage());
+                        }
                     }
                     break;
 
@@ -253,21 +253,11 @@ public class CLIHandler {
             this.protectedPathsPassword = askAPassword();
         }
 
-        for (String path : pathManager.getProtectedPaths()) {
-            File protectedFile = new File(path);
-            if (encryption) {
-                if (protectedFile.isDirectory()) {
-                    Encryptor.encryptDirectory(protectedFile, this.protectedPathsPassword);
-                } else {
-                    Encryptor.encrypt(protectedFile, this.protectedPathsPassword);
-                }
-            } else {
-                if (protectedFile.isDirectory()) {
-                    Encryptor.decryptDirectory(protectedFile, this.protectedPathsPassword);
-                } else {
-                    Encryptor.decrypt(protectedFile, this.protectedPathsPassword);
-                }
-            }
+        if (encryption) {
+            pathManager.encryptProtectedPaths(this.protectedPathsPassword);
+        } else
+        {
+            pathManager.decryptProtectedPaths(this.protectedPathsPassword);
         }
     }
 }

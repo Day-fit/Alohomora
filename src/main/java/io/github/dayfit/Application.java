@@ -27,21 +27,21 @@ public class Application {
             isClosed = true;
 
             try {
-                if (!pathManager.getProtectedPaths().isEmpty())
-                {
+                if (!pathManager.getProtectedPaths().isEmpty()) {
                     System.out.println("Saving protected paths...");
                     pathManager.saveProtectedPaths();
                 }
 
-                if (server != null)
-                {
+                if (server != null) {
                     System.out.println("Stopping background services...");
                     server.stop();
                 }
 
+                pathManager.encryptProtectedPaths(cliHandler.protectedPathsPassword);
+
                 System.out.println("Alohomora closed successfully");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                System.out.println("An error occured: " + e.getMessage());
             }
         }
         ));
