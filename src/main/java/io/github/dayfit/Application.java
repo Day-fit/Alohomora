@@ -37,7 +37,7 @@ public class Application {
                     server.stop();
                 }
 
-                pathManager.encryptProtectedPaths(cliHandler.protectedPathsPassword);
+                pathManager.encryptProtectedPaths(cliHandler.getProtectedPathsPassword());
 
                 System.out.println("Alohomora closed successfully");
             } catch (Exception e) {
@@ -84,8 +84,7 @@ public class Application {
 
                 String response = in.readLine();
 
-                if (response != null)
-                {
+                if (response != null) {
                     System.out.println("Alohomora: " + response);
                 }
             } catch (IOException e) {

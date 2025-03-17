@@ -1,5 +1,6 @@
 package io.github.dayfit;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -11,7 +12,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CLIHandlerTest {
 
-    final PathManager pathManager = new PathManager();
+    PathManager pathManager;
+
+    @BeforeEach
+    void setUp() {
+        pathManager = new PathManager();
+    }
+
+    @Test
+    void getterForProtectedPathPasswordAskForPasswordWhenNull() {
+        InputStream originalIn = System.in;
+        String testText = "testForScanner";
+        ByteArrayInputStream input = new ByteArrayInputStream(testText.getBytes());
+        System.setIn(input);
+
+        try {
+            CLIHandler cliHandler = new CLIHandler(pathManager);
+            cliHandler.getProtectedPathsPassword();
+            assertEquals(testText, cliHandler.getProtectedPathsPassword());
+        } finally {
+            System.setIn(originalIn);
+        }
+    }
 
     @Test
     void CLIHandlerWithValidEncryptFileArgumentEncryptsFile() throws Exception {
