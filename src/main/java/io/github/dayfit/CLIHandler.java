@@ -152,9 +152,15 @@ public class CLIHandler {
         }
     }
 
-    public String getProtectedPathsPassword()
-    {
-        return this.protectedPathsPassword != null? this.protectedPathsPassword : askAPassword();
+    /**
+     * Retrieves the password for protected paths.
+     * If the password is not already set, prompts the user to enter a password.
+     *
+     * @return the password for protected paths
+     */
+    public String getProtectedPathsPassword() {
+        this.protectedPathsPassword = this.protectedPathsPassword != null ? this.protectedPathsPassword : askAPassword();
+        return this.protectedPathsPassword;
     }
 
     /**

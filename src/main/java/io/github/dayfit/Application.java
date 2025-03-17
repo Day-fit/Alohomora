@@ -84,8 +84,7 @@ public class Application {
 
                 String response = in.readLine();
 
-                if (response != null)
-                {
+                if (response != null) {
                     System.out.println("Alohomora: " + response);
                 }
             } catch (IOException e) {
