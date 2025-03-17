@@ -36,7 +36,7 @@ public class CLIHandler {
             \t-c - encrypt the protected paths list
             \t-vp - view the protected paths list""";
 
-    String protectedPathsPassword;
+    private String protectedPathsPassword;
     boolean isTested = false;
 
     /**
@@ -150,6 +150,11 @@ public class CLIHandler {
                     break;
             }
         }
+    }
+
+    public String getProtectedPathsPassword()
+    {
+        return this.protectedPathsPassword != null? this.protectedPathsPassword : askAPassword();
     }
 
     /**

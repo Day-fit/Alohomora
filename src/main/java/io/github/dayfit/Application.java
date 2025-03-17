@@ -37,7 +37,7 @@ public class Application {
                     server.stop();
                 }
 
-                pathManager.encryptProtectedPaths(cliHandler.protectedPathsPassword);
+                pathManager.encryptProtectedPaths(cliHandler.getProtectedPathsPassword());
 
                 System.out.println("Alohomora closed successfully");
             } catch (Exception e) {
