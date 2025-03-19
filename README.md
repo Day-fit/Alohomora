@@ -67,7 +67,7 @@ The new functionality allows you to pass arguments to a running application inst
 
 ## Prerequisites
 
-- Java Development Kit (JDK 21) 
+- Java Development Kit (JDK 21 or later)
 - Maven (for building the project)
 
 ## License
