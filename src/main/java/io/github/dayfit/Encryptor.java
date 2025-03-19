@@ -17,19 +17,9 @@ import java.util.Objects;
  */
 public class Encryptor {
     final static String ALGORITHM = "AES";
-    final static Cipher cipher;
-
-    static {
-        try {
-            cipher = Cipher.getInstance(ALGORITHM);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     final static String FILE_DECRYPTED_SUCCESSFULLY = "File has been decrypted successfully: ";
     final static String FILE_ENCRYPTED_SUCCESSFULLY = "File has been encrypted successfully: ";
-
     static final String BAD_PASSWORD_TEXT = "Given password might be incorrect or corrupted. \n" + "Please check if file is encrypted or not";
 
     private Encryptor() {
@@ -45,7 +35,7 @@ public class Encryptor {
      * @throws IOException if an I/O error occurs
      * @throws InvalidKeyException if the given key is invalid
      */
-    public static void encrypt(File inputFile, String password) throws IllegalBlockSizeException, NoSuchAlgorithmException, IOException, InvalidKeyException {
+    public static void encrypt(File inputFile, String password) throws IllegalBlockSizeException, NoSuchAlgorithmException, IOException, InvalidKeyException, NoSuchPaddingException {
         encrypt(inputFile, inputFile, password);
     }
 
@@ -63,55 +53,12 @@ public class Encryptor {
       * @throws IOException if an I/O error occurs
       * @throws IllegalBlockSizeException if the provided data is not a multiple of the block size
       */
-    public static void encrypt(File inputFile, File outputFile, String password) throws NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException {
-        cipher.init(Cipher.ENCRYPT_MODE, getKeyFromPassword(password));
-
-        if (!inputFile.exists())
-        {
-            throw new FileNotFoundException(inputFile.getAbsolutePath() + " does not exist");
-        }
-
-        if (!outputFile.exists()) {
-            if (!outputFile.createNewFile()) {
-                System.out.println("fatal error");
-                System.exit(1);
-            }
-        }
-
-        List<byte[]> encryptedData = new ArrayList<>();
-
-        try (FileInputStream fileInputStream = new FileInputStream(inputFile)) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-
-            while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                byte[] encryptedBytes = cipher.update(buffer, 0, bytesRead);
-                if (encryptedBytes != null && encryptedBytes.length > 0) {
-                    encryptedData.add(encryptedBytes);
-                }
-            }
-
-            byte[] finalBytes = cipher.doFinal();
-
-            if (finalBytes != null) {
-                encryptedData.add(finalBytes);
-            }
-
-        try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
-            for (byte[] encryptedBytes : encryptedData) {
-                fileOutputStream.write(encryptedBytes);
-            }
-
-            System.out.println(FILE_ENCRYPTED_SUCCESSFULLY + inputFile.getAbsolutePath());
-        }
-
-        } catch (BadPaddingException e) {
-            System.out.println("Could not decrypt file: " + inputFile.getAbsolutePath() + "\n" + BAD_PASSWORD_TEXT);
-        }
+    public static void encrypt(File inputFile, File outputFile, String password) throws NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException, NoSuchPaddingException {
+        handleEncryptionDecryption(inputFile, outputFile, password, true);
     }
 
     /**
-     * Encrypts all files in a directory recursively using the specified password.
+     * Encrypts all files in a directory using the specified password.
      *
      * @param directory the directory containing files to be encrypted
      * @param password  the password used for encryption
@@ -165,8 +112,53 @@ public class Encryptor {
      * @throws IOException if an I/O error occurs
      */
     public static void decrypt(File inputFile, File outputFile, String password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, IOException {
+        handleEncryptionDecryption(inputFile, outputFile, password, false);
+    }
+
+    /**
+     * Decrypts all files in a directory using the specified password.
+     *
+     * @param directory the directory containing files to be decrypted
+     * @param password  the password used for decryption
+     */
+    public static void decryptDirectory(File directory, String password) {
+        List<File> queue = new ArrayList<>(Arrays.asList(Objects.requireNonNull(directory.listFiles())));
+
+        while (!queue.isEmpty()) {
+            File file = queue.removeFirst();
+
+            if (file.isDirectory()) {
+                queue.addAll(Arrays.asList(Objects.requireNonNull(file.listFiles())));
+            } else {
+                try {
+                    decrypt(file, password);
+                } catch (Exception e) {
+                    System.out.println("[ERROR]: Could not encrypt file: " + file.getAbsolutePath() + "\n[ERROR]: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    /**
+     * Handles the encryption and decryption of files.
+     *
+     * @param inputFile  the file to be encrypted or decrypted
+     * @param outputFile the file to write the encrypted or decrypted data to
+     * @param password   the password used for encryption or decryption
+     * @param isEncryption true if the operation is encryption, false if decryption
+     *
+     * @throws NoSuchPaddingException if the specified padding mechanism is not available
+     * @throws NoSuchAlgorithmException if the specified algorithm is not available
+     * @throws InvalidKeyException if the given key is invalid
+     * @throws IOException if an I/O error occurs
+     * @throws IllegalBlockSizeException if the provided data is not a multiple of the block size
+     */
+    private static void handleEncryptionDecryption(File inputFile, File outputFile, String password, boolean isEncryption) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException {
+        final int CIPHER_MODE = isEncryption? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE;
+        final String MESSAGE = isEncryption ? FILE_ENCRYPTED_SUCCESSFULLY : FILE_DECRYPTED_SUCCESSFULLY;
+
         Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, getKeyFromPassword(password));
+        cipher.init(CIPHER_MODE, getKeyFromPassword(password));
 
         if (!inputFile.exists())
         {
@@ -205,34 +197,10 @@ public class Encryptor {
                     fileOutputStream.write(data);
                 }
 
-                System.out.println(FILE_DECRYPTED_SUCCESSFULLY + inputFile.getAbsolutePath());
+                System.out.println(MESSAGE + inputFile.getAbsolutePath());
             }
         } catch (BadPaddingException e) {
             System.out.println("[ERROR]: Could not decrypt file: " + inputFile.getAbsolutePath() + "\n" + BAD_PASSWORD_TEXT);
-        }
-    }
-
-    /**
-     * Decrypts all files in a directory recursively using the specified password.
-     *
-     * @param directory the directory containing files to be decrypted
-     * @param password  the password used for decryption
-     */
-    public static void decryptDirectory(File directory, String password) {
-        List<File> queue = new ArrayList<>(Arrays.asList(Objects.requireNonNull(directory.listFiles())));
-
-        while (!queue.isEmpty()) {
-            File file = queue.removeFirst();
-
-            if (file.isDirectory()) {
-                queue.addAll(Arrays.asList(Objects.requireNonNull(file.listFiles())));
-            } else {
-                try {
-                    decrypt(file, password);
-                } catch (Exception e) {
-                    System.out.println("[ERROR]: Could not encrypt file: " + file.getAbsolutePath() + "\n[ERROR]: " + e.getMessage());
-                }
-            }
         }
     }
 

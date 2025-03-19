@@ -29,7 +29,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
    cd Alohomora
    ```
 
-3. If this doesn't work, try:
+   If this doesn't work, try:
    ```bash
    cd alohomora
    ```
@@ -67,7 +67,7 @@ The new functionality allows you to pass arguments to a running application inst
 
 ## Prerequisites
 
-- Java Development Kit (JDK 23)
+- Java Development Kit (JDK 21) 
 - Maven (for building the project)
 
 ## License
