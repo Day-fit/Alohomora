@@ -1,4 +1,4 @@
-package io.github.dayfit;
+package io.dayfit.github;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

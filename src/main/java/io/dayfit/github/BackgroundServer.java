@@ -1,4 +1,4 @@
-package io.github.dayfit;
+package io.dayfit.github;
 
 import java.io.*;
 import java.net.ServerSocket;

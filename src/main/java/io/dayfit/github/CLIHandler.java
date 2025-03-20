@@ -1,4 +1,4 @@
-package io.github.dayfit;
+package io.dayfit.github;
 
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
