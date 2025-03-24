@@ -1,0 +1,19 @@
+@Service
+public static class CLICommandService
+{
+    private final PathManager pathManager;
+    private final CLIHandler handler;
+
+    public setPathManager(PathManager pathManager) {
+        this.pathManager = pathManager;
+        handler = new CLIHandler(pathManager);
+    }
+
+    public String executeCommand(String command) {
+        if(handler == null) {
+            throw new IllegalStateException("pathManager is not set");
+        }
+
+        handler.processArguments(command.split(" "));
+    }
+}

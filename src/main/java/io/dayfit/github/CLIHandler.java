@@ -206,8 +206,12 @@ public class CLIHandler {
     private String askAPassword() {
         System.out.print(PROVIDE_A_PASSWORD_TEXT);
         Scanner scanner = new Scanner(System.in);
+        String password = scanner.nextLine();
+        
+        password = password.trim();
+        scanner.close();
 
-        return scanner.nextLine();
+        return password;
     }
 
     /**
