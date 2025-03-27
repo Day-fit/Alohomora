@@ -1,4 +1,4 @@
-package io.dayfit.github;
+package io.dayfit.github.backgroundServices.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 

@@ -26,7 +26,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>io.dayfit.github.Application</mainClass>
+                            <mainClass>io.dayfit.github.clientApp.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,4 +1,4 @@
-package io.dayfit.github;
+package io.dayfit.github.backgroundServices.managers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
