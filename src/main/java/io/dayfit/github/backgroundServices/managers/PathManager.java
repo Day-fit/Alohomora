@@ -1,6 +1,6 @@
 package io.dayfit.github.backgroundServices.managers;
 import io.dayfit.github.backgroundServices.utils.Encryptor;
-import io.dayfit.github.backgroundServices.utils.JSON;
+import io.dayfit.github.shared.JSON;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 

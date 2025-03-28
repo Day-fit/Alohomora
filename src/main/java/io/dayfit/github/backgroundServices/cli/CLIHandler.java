@@ -20,7 +20,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Handles command-line interface (CLI) arguments and operations.
@@ -86,6 +85,7 @@ public class CLIHandler {
      * Processes the provided command-line arguments.
      *
      * @param args the command-line arguments
+     * @param password the password to use for encryption and decryption
      */
     public void processArguments(String[] args, String password) {
         List<String> arguments = new ArrayList<>(Arrays.asList(args));
@@ -124,12 +124,12 @@ public class CLIHandler {
                         break;
                     case "-d=":
                         String decryptPath = rawArgument.substring(3);
-                        handleEncryptionDecryption(decryptPath, false);
+                        handleEncryptionDecryption(decryptPath, false, password);
                         break;
 
                     case "-e=":
                         String encryptPath = rawArgument.substring(3);
-                        handleEncryptionDecryption(encryptPath, true);
+                        handleEncryptionDecryption(encryptPath, true, password);
                         break;
 
                     case "-a=":
@@ -163,7 +163,7 @@ public class CLIHandler {
      * @param isEncryption true if encryption is to be performed, false for decryption
      * @throws FileNotFoundException if the file or directory does not exist
      */
-    private void handleEncryptionDecryption(String path, boolean isEncryption) throws Exception {
+    private void handleEncryptionDecryption(String path, boolean isEncryption, String password) throws Exception {
         if (path == null || path.isEmpty()) {
             throw new IllegalArgumentException(EMPTY_PATH);
         }
@@ -174,7 +174,6 @@ public class CLIHandler {
             throw new FileNotFoundException("File not found: " + path);
         }
 
-        String password = askAPassword();
         String operation = isEncryption ? "encrypted" : "decrypted";
 
         try {
@@ -204,17 +203,6 @@ public class CLIHandler {
         } catch (Exception e) {
             throw new Exception("Failed to " + operation + " " + path + ": " + e.getMessage());
         }
-    }
-
-    /**
-     * Prompts the user to enter a password.
-     *
-     * @return the entered password
-     */
-    private String askAPassword() {
-        System.out.print(PROVIDE_A_PASSWORD_TEXT);
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine().trim();
     }
 
     /**

@@ -12,10 +12,18 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * Main client application class for Alohomora that handles interaction
+ * with background services via REST API.
+ * <p>
+ * This application is responsible for starting background services,
+ * sending commands and receiving responses.
+ * </p>
+ */
 public class Application {
     final static String SERVER_PING_RESPONSE = getProperty("server.ping.response");
     final static String APPLICATION_VERSION = getProperty("application.version");
@@ -24,7 +32,19 @@ public class Application {
 
     final static PasswordManager PASSWORD_MANAGER = new PasswordManager();
 
+    /**
+     * Main application method that processes command line arguments
+     * and communicates with the background service.
+     * 
+     * @param args Command line arguments to process
+     */
     public static void main(String[] args) {
+
+        if (args.length <= 0) {
+            System.out.println("No arguments provided. Exiting...");
+            System.exit(0);
+        }
+
         try {
             handleStartingBackgroundServices();
         } catch (InterruptedException | IOException e) {
@@ -42,6 +62,13 @@ public class Application {
         }
     }
 
+    /**
+     * Sends a command to the background service and optionally waits for a response.
+     * Handles authentication for secure commands (-d, -e, -c, -p).
+     * 
+     * @param command The command to send to the background service
+     * @param waitForResponse If true, waits for and displays the service response
+     */
     private static void sendCliToBackgroundService(String command, boolean waitForResponse) {
         RestTemplate restTemplate = createRestTemplateWithTimeout();
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
@@ -68,6 +95,13 @@ public class Application {
         }
     }
 
+    /**
+     * Handles the initialization of background services.
+     * Checks if the service is running and starts it if necessary.
+     * 
+     * @throws InterruptedException If the thread is interrupted while waiting for services
+     * @throws IOException If there's an error starting the background service process
+     */
     private static void handleStartingBackgroundServices() throws InterruptedException, IOException {
         String alohomoraServicesPath = "Alohomora-" + APPLICATION_VERSION + "-background.jar";
 
@@ -81,14 +115,7 @@ public class Application {
 
             ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", alohomoraServicesPath);
             processBuilder.inheritIO();
-
-            Process process = processBuilder.start();
-            boolean finished = process.waitFor(10, TimeUnit.SECONDS);
-            if (!finished) {
-                System.err.println("Background services did not start in time.");
-                process.destroy();
-                System.exit(1);
-            }
+            processBuilder.start();
 
             awaitForBackgroundServices();
         } else {
@@ -96,6 +123,13 @@ public class Application {
         }
     }
 
+    /**
+     * Waits for background services to become available.
+     * Periodically checks if the service is responding correctly.
+     * Times out after MAX_TIME_WAIT milliseconds.
+     * 
+     * @throws InterruptedException If the thread is interrupted while waiting
+     */
     private static void awaitForBackgroundServices() throws InterruptedException {
         int timeWaited = 0;
         while (isIncorrectPingResponse()) {
@@ -111,6 +145,12 @@ public class Application {
         System.out.println("Background services are up and running...");
     }
 
+    /**
+     * Checks if the ping response from background services is incorrect.
+     * 
+     * @return true if ping response is incorrect or an exception occurs,
+     *         false if ping response matches expected response
+     */
     private static boolean isIncorrectPingResponse() {
         try {
             RestTemplate restTemplate = createRestTemplateWithTimeout();
@@ -122,6 +162,11 @@ public class Application {
         }
     }
 
+    /**
+     * Creates a RestTemplate with connection and read timeouts set.
+     * 
+     * @return Configured RestTemplate instance
+     */
     private static RestTemplate createRestTemplateWithTimeout() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(5000);
@@ -129,6 +174,14 @@ public class Application {
         return new RestTemplate(factory);
     }
 
+    /**
+     * Retrieves a property value from the application.properties file.
+     * 
+     * @param key The property key to look up
+     * @return The property value
+     * @throws RuntimeException If the properties file cannot be loaded or the key isn't found
+     * @throws NoSuchFileException If the properties file is not found
+     */
     private static String getProperty(String key) {
         Properties props = new Properties();
         try (InputStream inputStream = Application.class.getResourceAsStream("/application.properties")) {
@@ -136,7 +189,7 @@ public class Application {
                 props.load(inputStream);
                 return props.getProperty(key);
             } else {
-                throw new RuntimeException("Version file not found");
+                throw new NoSuchFileException("Version file not found");
             }
         } catch (Exception e) {
             throw new RuntimeException("Error loading version file", e);

@@ -26,6 +26,9 @@ public class PasswordManager {
     private String askPassword() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your password: ");
-        return scanner.nextLine();
+        String password = scanner.nextLine();
+        scanner.close();
+        
+        return password;
     }
 }

@@ -45,7 +45,6 @@ public class CLIController {
     public ServerMessage cli(@RequestParam String command) {
         try {
             cliCommandService.executeCommand(command);
-            serverMessage.setPrefix("[Success]: ");
 
             return serverMessage;
         } catch (Exception ex) {

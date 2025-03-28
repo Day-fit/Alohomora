@@ -29,27 +29,11 @@
                         <configuration>
                             <mainClass>io.dayfit.github.clientApp.Application</mainClass>
                             <classifier>client</classifier>
-                            <includes>
-                                <include>
-                                    <groupId>*</groupId>
-                                    <artifactId>*</artifactId>
-                                </include>
-                            </includes>
-                            <excludes>
-                                <exclude>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                </exclude>
-                            </excludes>
                             <layout>JAR</layout>
                             <requiresUnpack>
                                 <dependency>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>${project.artifactId}</artifactId>
-                                    <includes>
-                                        <include>io/dayfit/github/clientApp/**</include>
-                                        <include>io/dayfit/github/shared/**</include>
-                                    </includes>
                                 </dependency>
                             </requiresUnpack>
                         </configuration>
@@ -62,27 +46,11 @@
                         <configuration>
                             <mainClass>io.dayfit.github.backgroundServices.BackgroundApplication</mainClass>
                             <classifier>background</classifier>
-                            <includes>
-                                <include>
-                                    <groupId>*</groupId>
-                                    <artifactId>*</artifactId>
-                                </include>
-                            </includes>
-                            <excludes>
-                                <exclude>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                </exclude>
-                            </excludes>
                             <layout>JAR</layout>
                             <requiresUnpack>
                                 <dependency>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>${project.artifactId}</artifactId>
-                                    <includes>
-                                        <include>io/dayfit/github/backgroundServices/**</include>
-                                        <include>io/dayfit/github/shared/**</include>
-                                    </includes>
                                 </dependency>
                             </requiresUnpack>
                         </configuration>
