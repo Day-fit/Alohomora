@@ -52,8 +52,10 @@ public class PathManager {
      *
      * @param protectedPath a string representing the path to be added
      */
-    public void addProtectedPath(String protectedPath) {
+    public void addProtectedPath(String protectedPath) throws IOException {
         this.protectedPaths.add(protectedPath);
+
+        saveProtectedPaths();
     }
 
     /**

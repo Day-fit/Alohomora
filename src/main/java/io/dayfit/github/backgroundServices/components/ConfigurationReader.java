@@ -27,7 +27,6 @@ public class ConfigurationReader {
      * @return the server ping response as a String
      */
     public String getServerPingResponse() {
-        System.out.println(env.getProperty("server.ping.response"));
         return env.getProperty("server.ping.response");
     }
 }

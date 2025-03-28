@@ -228,7 +228,7 @@ class CLIHandlerTest {
     }
 
     @Test
-    void CLIHandlerWithShowProtectedPathArgumentShowsPath() {
+    void CLIHandlerWithShowProtectedPathArgumentShowsPath() throws IOException {
         String testPath = "protectedPathTest";
         pathManager.addProtectedPath(testPath);
 

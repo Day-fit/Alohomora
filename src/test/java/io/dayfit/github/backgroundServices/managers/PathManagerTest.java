@@ -16,14 +16,14 @@ class PathManagerTest {
     }
 
     @Test
-    void addingProtectedPathIncreasesListSize() {
+    void addingProtectedPathIncreasesListSize() throws Exception {
         String path ="path/to/protect";
         pathManager.addProtectedPath(path);
         assertEquals(1, pathManager.getProtectedPaths().size());
     }
 
     @Test
-    void removingProtectedPathDecreasesListSize() {
+    void removingProtectedPathDecreasesListSize() throws Exception{
         String path = "path/to/protect";
         pathManager.addProtectedPath(path);
         pathManager.removeProtectedPath(path);
@@ -31,7 +31,7 @@ class PathManagerTest {
     }
 
     @Test
-    void getProtectedPathsReturnsCorrectPaths() {
+    void getProtectedPathsReturnsCorrectPaths() throws Exception{
         String path1 = "path/to/protect1";
         String path2 = "path/to/protect2";
         pathManager.addProtectedPath(path1);
@@ -42,7 +42,7 @@ class PathManagerTest {
     }
 
     @Test
-    void setProtectedPathsReplacesExistingPaths() {
+    void setProtectedPathsReplacesExistingPaths() throws Exception{
         String path1 = "path/to/protect1";
         String path2 = "path/to/protect2";
         pathManager.addProtectedPath(path1);
