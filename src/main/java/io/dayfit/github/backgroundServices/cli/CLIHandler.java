@@ -140,6 +140,7 @@ public class CLIHandler {
                         break;
 
                     case "-vp":
+                        serverMessage.setPrefix("[Success]: ]");
                         serverMessage.setMessage(pathManager.getProtectedPaths().toString());
                         break;
 
