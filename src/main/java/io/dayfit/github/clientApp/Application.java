@@ -40,7 +40,7 @@ public class Application {
      */
     public static void main(String[] args) {
 
-        if (args.length <= 0) {
+        if (args.length == 0) {
             System.out.println("No arguments provided. Exiting...");
             System.exit(0);
         }
@@ -176,13 +176,11 @@ public class Application {
 
     /**
      * Retrieves a property value from the application.properties file.
-     * 
+     *
      * @param key The property key to look up
      * @return The property value
-     * @throws RuntimeException If the properties file cannot be loaded or the key isn't found
-     * @throws NoSuchFileException If the properties file is not found
      */
-    private static String getProperty(String key) {
+    private static String getProperty(String key) throws RuntimeException{
         Properties props = new Properties();
         try (InputStream inputStream = Application.class.getResourceAsStream("/application.properties")) {
             if (inputStream != null) {

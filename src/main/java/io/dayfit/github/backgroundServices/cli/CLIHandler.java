@@ -31,7 +31,6 @@ public class CLIHandler {
     private PathManager pathManager;
     private final ShutdownManager shutdownManager;
 
-    public final String PROVIDE_A_PASSWORD_TEXT = "Please enter your password: ";
     public final String FILE_NOT_FOUND_TEXT = "No such a file or directory have been found";
     public final String ERROR_TEXT = "Something went wrong!";
     public final String NO_SUCH_ARGUMENT = "No such argument, please try -h argument for help";
