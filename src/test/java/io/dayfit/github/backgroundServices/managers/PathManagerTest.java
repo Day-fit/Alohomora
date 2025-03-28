@@ -12,7 +12,7 @@ class PathManagerTest {
 
     @BeforeEach
     void setUp() {
-        pathManager = new PathManager();
+        pathManager = new PathManager(false);
     }
 
     @Test

@@ -33,18 +33,16 @@ public class CLIController {
         this.configurationReader = configurationReader;
     }
 
-    /**
-     * Endpoint to execute a CLI command.
-     *
-     * @param command the CLI command to execute
-     *
-     * @return a message indicating the result of the command execution
-     */
     @PostMapping("/cli")
     @ResponseBody
-    public ServerMessage cli(@RequestParam String command) {
+    public ServerMessage cli(@RequestParam String command,
+                             @RequestParam(required = false) String password) {
         try {
-            cliCommandService.executeCommand(command);
+            if (password != null && !password.isEmpty()) {
+                cliCommandService.executeCommand(command, password);
+            } else {
+                cliCommandService.executeCommand(command);
+            }
 
             return serverMessage;
         } catch (Exception ex) {

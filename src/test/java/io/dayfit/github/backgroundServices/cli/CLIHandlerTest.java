@@ -228,6 +228,7 @@ class CLIHandlerTest {
     }
 
     @Test
+    @DirtiesContext
     void CLIHandlerWithShowProtectedPathArgumentShowsPath() throws IOException {
         String testPath = "protectedPathTest";
         pathManager.addProtectedPath(testPath);
@@ -242,6 +243,8 @@ class CLIHandlerTest {
 
     @Test
     void CLIHandlerWithValidProtectedPathsArgumentDecryptsPaths() throws Exception {
+        pathManager.getProtectedPaths().clear();
+
         Path file1 = tempDir.resolve("protectedFile1.txt");
         Path file2 = tempDir.resolve("protectedFile2.txt");
 
@@ -251,21 +254,25 @@ class CLIHandlerTest {
         pathManager.addProtectedPath(file1.toString());
         pathManager.addProtectedPath(file2.toString());
 
-        // Encrypt files individually
         Encryptor.encrypt(file1.toFile(), TEST_PASSWORD);
         Encryptor.encrypt(file2.toFile(), TEST_PASSWORD);
 
-        // Decrypt protected paths
+        assertTrue(Files.exists(file1), "File 1 should exist before decryption");
+        assertTrue(Files.exists(file2), "File 2 should exist before decryption");
+
         String[] args = {"-p"};
 
         new CLIHandler(args, pathManager, serverMessage, shutdownManager, TEST_PASSWORD);
 
-        assertTrue(serverMessage.getMessage().contains("Protected paths list successfully decrypted"),
+        assertEquals("Protected paths list successfully decrypted", serverMessage.getMessage(),
                 "Success message should be shown");
     }
 
     @Test
+    @DirtiesContext
     void CLIHandlerWithValidProtectedPathsArgumentEncryptsPaths() throws Exception {
+        pathManager.getProtectedPaths().clear();
+
         Path file1 = tempDir.resolve("toEncryptFile1.txt");
         Path file2 = tempDir.resolve("toEncryptFile2.txt");
 
@@ -275,12 +282,11 @@ class CLIHandlerTest {
         pathManager.addProtectedPath(file1.toString());
         pathManager.addProtectedPath(file2.toString());
 
-        // Encrypt protected paths
         String[] args = {"-c"};
 
         new CLIHandler(args, pathManager, serverMessage, shutdownManager, TEST_PASSWORD, true);
 
-        assertTrue(serverMessage.getMessage().contains("Protected paths list successfully encrypted"),
+        assertEquals("Protected paths list successfully encrypted", serverMessage.getMessage(),
                 "Success message should be shown");
     }
 

@@ -8,12 +8,15 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class PathManager {
@@ -26,6 +29,15 @@ public class PathManager {
      * Initializes a new instance of the PathManager class.
      */
     public PathManager(){
+        loadProtectedPaths();
+    }
+
+    public PathManager(boolean loadProtectedPaths)
+    {
+        if (loadProtectedPaths)
+        {
+            loadProtectedPaths();
+        }
     }
 
     /**
@@ -54,7 +66,6 @@ public class PathManager {
      */
     public void addProtectedPath(String protectedPath) throws IOException {
         this.protectedPaths.add(protectedPath);
-
         saveProtectedPaths();
     }
 
@@ -125,6 +136,11 @@ public class PathManager {
         for (String path : protectedPaths) {
             File protectedFile = new File(path);
 
+            if (!protectedFile.exists())
+            {
+                throw new FileNotFoundException("No such file or directory: " + protectedFile.getAbsolutePath());
+            }
+
             if (protectedFile.isDirectory())
             {
                 if (encryption) {
@@ -145,6 +161,20 @@ public class PathManager {
                     Encryptor.decrypt(protectedFile, password);
                 }
             }
+        }
+    }
+
+    private void loadProtectedPaths()
+    {
+        try
+        {
+            StringBuilder sb = new StringBuilder();
+            Files.readAllLines(Path.of(PATH_MANAGER_FILE)).forEach(sb::append);
+            Set<?> tempSet = JSON.fromJSON(sb.toString(), Set.class);
+            this.protectedPaths = tempSet.stream().filter(element -> element instanceof String).map(element -> (String)element).collect(Collectors.toSet());
+        }catch (IOException e)
+        {
+            System.err.println("Could not load protectedPaths.json. Using empty protectedPaths.");
         }
     }
 }

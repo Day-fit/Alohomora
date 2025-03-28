@@ -222,14 +222,16 @@ public class CLIHandler {
         }
 
         if (addProtectedPaths) {
-            pathManager.addProtectedPath(path);
             serverMessage.setPrefix("[Success]: ");
             serverMessage.setMessage("Successfully added protected path: " + path);
+
+            pathManager.addProtectedPath(path);
         } else {
             if (pathManager.getProtectedPaths().contains(path)) {
-                pathManager.removeProtectedPath(path);
                 serverMessage.setPrefix("[Success]: ");
                 serverMessage.setMessage("Successfully removed protected path: " + path);
+
+                pathManager.removeProtectedPath(path);
             } else {
                 serverMessage.setPrefix("[Warning]: ");
                 serverMessage.setMessage("Path is not a protected path: " + path);
@@ -245,13 +247,13 @@ public class CLIHandler {
     private void handleProtectedPaths(boolean encryption, String password) {
         try {
             if (encryption) {
-                pathManager.encryptProtectedPaths(password);
                 serverMessage.setPrefix("[Success]: ");
                 serverMessage.setMessage("Protected paths list successfully encrypted");
+                pathManager.encryptProtectedPaths(password);
             } else {
-                pathManager.decryptProtectedPaths(password);
                 serverMessage.setPrefix("[Success]: ");
                 serverMessage.setMessage("Protected paths list successfully decrypted");
+                pathManager.decryptProtectedPaths(password);
             }
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             serverMessage.setPrefix("[Error]: ");
