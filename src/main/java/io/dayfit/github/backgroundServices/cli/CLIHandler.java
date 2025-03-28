@@ -102,7 +102,9 @@ public class CLIHandler {
             try {
                 switch (arg) {
                     case "-h":
+                        serverMessage.setPrefix("[Success]: ");
                         serverMessage.setMessage(HELP_TEXT);
+
                         break;
 
                     case "-p":
@@ -140,7 +142,7 @@ public class CLIHandler {
                         break;
 
                     case "-vp":
-                        serverMessage.setPrefix("[Success]: ]");
+                        serverMessage.setPrefix("[Success]: ");
                         serverMessage.setMessage(pathManager.getProtectedPaths().toString());
                         break;
 

@@ -35,10 +35,10 @@ public class CLIController {
 
     @PostMapping("/cli")
     @ResponseBody
-    public ServerMessage cli(@RequestParam String command,
-                             @RequestParam(required = false) String password) {
+    public ServerMessage cli(@RequestParam String command, @RequestParam(required = false) String password) {
         try {
             if (password != null && !password.isEmpty()) {
+                serverMessage.setPrefix("[Success]: ");
                 cliCommandService.executeCommand(command, password);
             } else {
                 cliCommandService.executeCommand(command);
