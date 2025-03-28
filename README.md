@@ -40,7 +40,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
     ```
 4. Run the Application:
    ```bash
-    java -jar target/Alohomora-{version}.jar [options]
+    java -jar target/Alohomora-{version}-client.jar [options]
     ```
    
    Make sure you have the [Prerequisites](#prerequisites) installed.
@@ -55,10 +55,10 @@ Alohomora supports the following command-line arguments:
 - -a="path" – add a path to the protected paths list.
 - -r="path" – remove a path from the protected paths list.
 - -p – decrypt all protected paths.
-- -c – encrypt all protected paths.
+- -c – encrypt all protected paths and close Alohomora.
 - -vp – display the list of protected paths.
 
-### Why I need to have two files?
+### Why I need to download two files?
 
 The application consists of two components:  
 - A client application for user interactions
@@ -77,7 +77,7 @@ Alohomora is licensed under the BSD 3-Clause License. This permissive license al
 
 ## Contributing
 
-Currently, external contributions are not accepted. Future updates will provide guidelines for those interested in contributing.
+Currently, external contributions are not accepted. Future updates might provide guidelines for those interested in contributing.
 
 ## Contact & Support
 
