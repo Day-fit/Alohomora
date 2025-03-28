@@ -40,7 +40,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
     ```
 4. Run the Application:
    ```bash
-    java -jar target/Alohomora-{version}-jar-with-dependencies.jar [options]
+    java -jar target/Alohomora-{version}.jar [options]
     ```
    
    Make sure you have the [Prerequisites](#prerequisites) installed.
@@ -58,12 +58,13 @@ Alohomora supports the following command-line arguments:
 - -c – encrypt all protected paths.
 - -vp – display the list of protected paths.
 
-### Interactive Mode
+### Why I need to have two files?
 
-The new functionality allows you to pass arguments to a running application instance. When the application starts, it launches a background server (by default on port 8765) that allows dynamic command input. In interactive mode:
-- A prompt ">" is displayed on the console for entering commands such as -e="/path/to/directory" or -d="/path/to/file".
-- Entered commands are sent to the running server, which processes the arguments similarly to when they are provided at startup.
-- To verify that the server is running, you can send the ping command, to which the server responds with ALOHOMORA_SERVER.
+The application consists of two components:  
+- A client application for user interactions
+- A background service that manages file operations
+When the application starts, it launches a background server (by default on port 8080),
+That's why!
 
 ## Prerequisites
 

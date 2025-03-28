@@ -20,19 +20,23 @@ jobs:
           release: 21
 
       - name: Build with Maven
-        run: mvn clean package
+        run: mvn clean verify
 
       - name: Rename JAR for Release
-        run: mv target/*-jar-with-dependencies.jar target/Alohomora-${{ github.ref_name }}.jar
+        run: |
+          mv target/*-client.jar target/Alohomora-${{ github.ref_name }}-client.jar
+          mv target/*-background.jar target/Alohomora-${{ github.ref_name }}-background.jar
 
       - name: Create GitHub Release and Upload JAR
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          body:
-                This is the release of Alohomora version ${{ github.ref_name }}.
-                The JAR file is attached below.
-          files: target/Alohomora-${{ github.ref_name }}.jar
+          body: |
+            This is the release of Alohomora version ${{ github.ref_name }}.
+            The JAR files are attached below. (client and background)
+          files: |
+            target/Alohomora-${{ github.ref_name }}-client.jar
+            target/Alohomora-${{ github.ref_name }}-background.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

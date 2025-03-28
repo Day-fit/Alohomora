@@ -1,9 +1,11 @@
-package io.dayfit.github;
+package io.dayfit.github.backgroundServices.utils;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.attribute.DosFileAttributes;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +22,6 @@ public class Encryptor {
 
     final static String FILE_DECRYPTED_SUCCESSFULLY = "File has been decrypted successfully: ";
     final static String FILE_ENCRYPTED_SUCCESSFULLY = "File has been encrypted successfully: ";
-    static final String BAD_PASSWORD_TEXT = "Given password might be incorrect or corrupted. \n" + "Please check if file is encrypted or not";
 
     private Encryptor() {
     }
@@ -35,7 +36,7 @@ public class Encryptor {
      * @throws IOException if an I/O error occurs
      * @throws InvalidKeyException if the given key is invalid
      */
-    public static void encrypt(File inputFile, String password) throws IllegalBlockSizeException, NoSuchAlgorithmException, IOException, InvalidKeyException, NoSuchPaddingException {
+    public static void encrypt(File inputFile, String password) throws IllegalBlockSizeException, NoSuchAlgorithmException, IOException, InvalidKeyException, NoSuchPaddingException, BadPaddingException {
         encrypt(inputFile, inputFile, password);
     }
 
@@ -48,12 +49,14 @@ public class Encryptor {
       * @param inputFile  the file to be encrypted
       * @param outputFile the file to write the encrypted data to
       * @param password   the password used for encryption
+     *
+     * @throws BadPaddingException if the specified password is invalid or file is corrupted
       * @throws NoSuchAlgorithmException if the specified algorithm is not available
       * @throws InvalidKeyException if the given key is invalid
       * @throws IOException if an I/O error occurs
       * @throws IllegalBlockSizeException if the provided data is not a multiple of the block size
       */
-    public static void encrypt(File inputFile, File outputFile, String password) throws NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException, NoSuchPaddingException {
+    public static void encrypt(File inputFile, File outputFile, String password) throws NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException {
         handleEncryptionDecryption(inputFile, outputFile, password, true);
     }
 
@@ -67,7 +70,7 @@ public class Encryptor {
         List<File> queue = new ArrayList<>(Arrays.asList(Objects.requireNonNull(directory.listFiles())));
 
         while (!queue.isEmpty()) {
-            File file = queue.removeFirst();
+            File file = queue.remove(0);
 
             if (file.isDirectory()) {
                 queue.addAll(Arrays.asList(Objects.requireNonNull(file.listFiles())));
@@ -86,13 +89,15 @@ public class Encryptor {
      *
      * @param inputFile the file to be decrypted
      * @param password  the password used for decryption
+     *
+     * @throws BadPaddingException if the specified password is invalid or file is corrupted
      * @throws NoSuchPaddingException if the specified padding mechanism is not available
      * @throws NoSuchAlgorithmException if the specified algorithm is not available
      * @throws InvalidKeyException if the given key is invalid
      * @throws IOException if an I/O error occurs
      * @throws IllegalBlockSizeException if the provided data is not a multiple of the block size
      */
-    public static void decrypt(File inputFile, String password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException {
+    public static void decrypt(File inputFile, String password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException, BadPaddingException {
         decrypt(inputFile, inputFile, password);
     }
 
@@ -105,13 +110,15 @@ public class Encryptor {
      * @param inputFile  the file to be decrypted
      * @param outputFile the file to write the decrypted data to
      * @param password   the password used for decryption
+     *
+     * @throws BadPaddingException if the specified password is invalid or file is corrupted
      * @throws NoSuchPaddingException if the specified padding mechanism is not available
      * @throws NoSuchAlgorithmException if the specified algorithm is not available
      * @throws InvalidKeyException if the given key is invalid
      * @throws IllegalBlockSizeException if the provided data is not a multiple of the block size
      * @throws IOException if an I/O error occurs
      */
-    public static void decrypt(File inputFile, File outputFile, String password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, IOException {
+    public static void decrypt(File inputFile, File outputFile, String password) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, IOException, BadPaddingException {
         handleEncryptionDecryption(inputFile, outputFile, password, false);
     }
 
@@ -125,7 +132,7 @@ public class Encryptor {
         List<File> queue = new ArrayList<>(Arrays.asList(Objects.requireNonNull(directory.listFiles())));
 
         while (!queue.isEmpty()) {
-            File file = queue.removeFirst();
+            File file = queue.remove(0);
 
             if (file.isDirectory()) {
                 queue.addAll(Arrays.asList(Objects.requireNonNull(file.listFiles())));
@@ -147,27 +154,33 @@ public class Encryptor {
      * @param password   the password used for encryption or decryption
      * @param isEncryption true if the operation is encryption, false if decryption
      *
+     * @throws BadPaddingException if the specified password is invalid or file is corrupted
      * @throws NoSuchPaddingException if the specified padding mechanism is not available
      * @throws NoSuchAlgorithmException if the specified algorithm is not available
      * @throws InvalidKeyException if the given key is invalid
      * @throws IOException if an I/O error occurs
      * @throws IllegalBlockSizeException if the provided data is not a multiple of the block size
      */
-    private static void handleEncryptionDecryption(File inputFile, File outputFile, String password, boolean isEncryption) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException {
+    private static void handleEncryptionDecryption(File inputFile, File outputFile, String password, boolean isEncryption) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException, IllegalBlockSizeException, BadPaddingException {
         final int CIPHER_MODE = isEncryption? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE;
         final String MESSAGE = isEncryption ? FILE_ENCRYPTED_SUCCESSFULLY : FILE_DECRYPTED_SUCCESSFULLY;
-
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(CIPHER_MODE, getKeyFromPassword(password));
 
         if (!inputFile.exists())
         {
             throw new FileNotFoundException(inputFile.getAbsolutePath() + " does not exist");
         }
 
+        if (isSystemPath(inputFile)) {
+            System.out.println("[ERROR]: Cannot encrypt/decrypt system file: " + inputFile.getAbsolutePath());
+            return;
+        }
+
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        cipher.init(CIPHER_MODE, getKeyFromPassword(password));
+
         if (!outputFile.exists()) {
             if (!outputFile.createNewFile()) {
-                System.out.println("fatal error");
+                System.out.println("Could not create output file: " + outputFile.getAbsolutePath());
                 System.exit(1);
             }
 
@@ -199,8 +212,6 @@ public class Encryptor {
 
                 System.out.println(MESSAGE + inputFile.getAbsolutePath());
             }
-        } catch (BadPaddingException e) {
-            System.out.println("[ERROR]: Could not decrypt file: " + inputFile.getAbsolutePath() + "\n" + BAD_PASSWORD_TEXT);
         }
     }
 
@@ -215,5 +226,28 @@ public class Encryptor {
         MessageDigest sha = MessageDigest.getInstance("SHA-256");
         byte[] keyBytes = sha.digest(password.getBytes(StandardCharsets.UTF_8));
         return new SecretKeySpec(keyBytes, 0, 16, ALGORITHM);
+    }
+
+    private static boolean isSystemPath(File file) throws IOException {
+        final String OS_NAME = System.getProperty("os.name").toLowerCase();
+        final String[] SYSTEM_DIRS = {"/bin", "/sbin", "/etc", "/usr/bin", "/usr/sbin"};
+
+        if (OS_NAME.contains("win"))
+        {
+            DosFileAttributes dosFileAttributes = Files.readAttributes(file.toPath(), DosFileAttributes.class);
+            return dosFileAttributes.isSystem();
+        }
+
+        else if (OS_NAME.contains("mac") || OS_NAME.contains("nix") || OS_NAME.contains("nux") || OS_NAME.contains("aix"))
+        {
+            for (String dir : SYSTEM_DIRS)
+            {
+                if (file.getAbsolutePath().contains(dir))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
