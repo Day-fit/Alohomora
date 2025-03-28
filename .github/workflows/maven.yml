@@ -1,35 +1,77 @@
-name: Build and Test Alohomora
+name: Build, Test, and Release
 
 on:
   push:
     branches: [ "main" ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  
-      security-events: write  
+      contents: write
+      security-events: write
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        cache: maven
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
 
-    - name: Test with Maven
-      run: mvn test
+      - name: Test with Maven
+        run: mvn test
 
-    - name: Update Dependency Graph
-      uses: advanced-security/maven-dependency-submission-action@v4
-      with:
-        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Update Dependency Graph
+        uses: advanced-security/maven-dependency-submission-action@v4
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  release:
+    needs: build-and-test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build with Maven
+        run: mvn clean verify
+
+      - name: Rename JAR for Release
+        id: rename-jar
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          mv target/*-client.jar target/Alohomora-$VERSION-client.jar
+          mv target/*-background.jar target/Alohomora-$VERSION-background.jar
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release and Upload JAR
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            This is the release of Alohomora version ${{ github.ref_name }}.
+            The JAR files are attached below. (client and background)
+          files: |
+            target/Alohomora-${{ steps.rename-jar.outputs.version }}-client.jar
+            target/Alohomora-${{ steps.rename-jar.outputs.version }}-background.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
