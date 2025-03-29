@@ -6,14 +6,16 @@ Alohomora is a Java-based application designed to help you manage your files by 
 
 - Encrypt Files or Directories: Secure your sensitive data by encrypting individual files or entire directories.
 - Decrypt Files or Directories: Access your protected data by decrypting previously secured files or directories.
+- Protected Paths: Protect your sensitive data by adding to protected paths list for easy and fast encrypting-decrypting operations
 - **Planned Features**:
     - Enhanced security measures, including improved hashing algorithms and salted hashes.
+    - Graphical client (UI version)
 
 ## Installation (from releases)
 1. Look for the **latest release** at [releases](https://github.com/Day-fit/Alohomora/releases), and download the jar file
 2. Run the Application:
    ```bash
-    java -jar target/Alohomora-[version].jar [options]
+    java -jar Alohomora-[version]-client.jar [options]
     ```
    Make sure you have the [Prerequisites](#prerequisites) installed.
 
@@ -40,7 +42,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
     ```
 4. Run the Application:
    ```bash
-    java -jar target/Alohomora-{version}-client.jar [options]
+    java -jar target/Alohomora-[version]-client.jar [options]
     ```
    
    Make sure you have the [Prerequisites](#prerequisites) installed.
@@ -70,6 +72,7 @@ That's why!
 
 - Java Development Kit (JDK 21 or later)
 - Maven (for building the project)
+- **Background and client files must be in the same directory**
 
 ## License
 
