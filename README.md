@@ -6,14 +6,16 @@ Alohomora is a Java-based application designed to help you manage your files by 
 
 - Encrypt Files or Directories: Secure your sensitive data by encrypting individual files or entire directories.
 - Decrypt Files or Directories: Access your protected data by decrypting previously secured files or directories.
+- Protected Paths: Protect your sensitive data by adding to protected paths list for easy and fast encrypting-decrypting operations
 - **Planned Features**:
     - Enhanced security measures, including improved hashing algorithms and salted hashes.
+    - Graphical client (UI version)
 
 ## Installation (from releases)
 1. Look for the **latest release** at [releases](https://github.com/Day-fit/Alohomora/releases), and download the jar file
 2. Run the Application:
    ```bash
-    java -jar target/Alohomora-[version].jar [options]
+    java -jar Alohomora-[version]-client.jar [options]
     ```
    Make sure you have the [Prerequisites](#prerequisites) installed.
 
@@ -40,7 +42,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
     ```
 4. Run the Application:
    ```bash
-    java -jar target/Alohomora-{version}.jar [options]
+    java -jar target/Alohomora-[version]-client.jar [options]
     ```
    
    Make sure you have the [Prerequisites](#prerequisites) installed.
@@ -55,10 +57,10 @@ Alohomora supports the following command-line arguments:
 - -a="path" – add a path to the protected paths list.
 - -r="path" – remove a path from the protected paths list.
 - -p – decrypt all protected paths.
-- -c – encrypt all protected paths.
+- -c – encrypt all protected paths and close Alohomora.
 - -vp – display the list of protected paths.
 
-### Why I need to have two files?
+### Why I need to download two files?
 
 The application consists of two components:  
 - A client application for user interactions
@@ -70,6 +72,7 @@ That's why!
 
 - Java Development Kit (JDK 21 or later)
 - Maven (for building the project)
+- **Background and client files must be in the same directory**
 
 ## License
 
@@ -77,7 +80,7 @@ Alohomora is licensed under the BSD 3-Clause License. This permissive license al
 
 ## Contributing
 
-Currently, external contributions are not accepted. Future updates will provide guidelines for those interested in contributing.
+Currently, external contributions are not accepted. Future updates might provide guidelines for those interested in contributing.
 
 ## Contact & Support
 
