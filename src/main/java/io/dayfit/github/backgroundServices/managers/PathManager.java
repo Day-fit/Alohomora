@@ -84,9 +84,7 @@ public class PathManager {
      * @throws IOException if an I/O error occurs
      */
     public void saveProtectedPaths() throws IOException {
-        Runnable saving = new SavingManager(Path.of(PATH_MANAGER_FILE), JSON.toJSON(this.protectedPaths));
-        Thread thread = new Thread(saving);
-        thread.start();
+        JSON.saveJSON(JSON.toJSON(this.protectedPaths), Path.of(PATH_MANAGER_FILE));
     }
 
     /**
