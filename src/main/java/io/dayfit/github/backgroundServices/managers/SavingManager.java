@@ -22,7 +22,7 @@ public class SavingManager implements Runnable {
         try {
             saveFile();
         } catch (IOException e) {
-            System.err.println("An error occurred"+e.getMessage());
+            System.err.println("An error occurred "+e.getMessage());
         }
     }
 
