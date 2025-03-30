@@ -27,7 +27,7 @@ public class SavingManager implements Runnable {
     }
 
     private void saveFile() throws IOException {
-        if (path.toFile().exists())
+        if (!path.toFile().exists())
         {
             throw new NoSuchFileException("No such file has been found: "+path.toAbsolutePath());
         }
