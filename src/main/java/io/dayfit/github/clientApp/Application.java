@@ -1,6 +1,7 @@
 package io.dayfit.github.clientApp;
 
 import io.dayfit.github.backgroundServices.POJOs.ServerMessage;
+import io.dayfit.github.shared.JSON;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,6 +13,11 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -31,6 +37,7 @@ public class Application {
     final static int MAX_TIME_WAIT = Integer.parseInt(getProperty("max.wait.time.backgroundServices"));
 
     final static PasswordManager PASSWORD_MANAGER = new PasswordManager();
+    final static String URL_ADDRESS = "http://localhost:"+SERVER_PORT;
 
     /**
      * Main application method that processes command line arguments
@@ -93,6 +100,31 @@ public class Application {
         } else {
             restTemplate.postForObject("http://localhost:" + SERVER_PORT + "/cli", request, Void.class);
         }
+    }
+
+    private static void sendCliToBackgroundService(String command) throws IOException
+    {
+        URL url = new URL(URL_ADDRESS+"/cli");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setDoOutput(true);
+
+        OutputStream os = connection.getOutputStream();
+        os.write(command.getBytes(StandardCharsets.UTF_8));
+        os.flush();
+        os.close();
+
+        int responseCode = connection.getResponseCode();
+        InputStream is = responseCode > 400 ? connection.getInputStream() : connection.getErrorStream();
+
+        String response = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        ServerMessage responseMessage = JSON.fromJSON(response, ServerMessage.class);
+
+        System.out.println(responseMessage.getPrefix() + " " + responseMessage.getMessage());
+        connection.disconnect();
     }
 
     /**
