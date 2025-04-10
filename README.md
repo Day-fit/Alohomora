@@ -13,7 +13,7 @@ Alohomora is a Java-based application designed to help you manage your files by 
 1. Look for the **latest release** at [releases](https://github.com/Day-fit/Alohomora/releases), and download the jar file
 2. Run the Application:
    ```bash
-    java -jar target/Alohomora-[version].jar [options]
+    java -jar Alohomora-client-[version].jar [options]
     ```
    Make sure you have the [Prerequisites](#prerequisites) installed.
 
@@ -34,13 +34,18 @@ Alohomora is a Java-based application designed to help you manage your files by 
    cd alohomora
    ```
 
-3. Build the Project Using Maven:
+3. Build the Project Using Maven-Wrapper:
    ```bash
-   mvn clean package
+   mvnw clean package
     ```
-4. Run the Application:
+ 
+4. Move jar files to one directory.
+   - Move **Alohomora-background-[version].jar** From: `backgroundServices/target/` to your directory
+   - Move **Alohomora-client-[version].jar** From: `clientApp/target/` to your directory
+
+5. Run the Application:
    ```bash
-    java -jar target/Alohomora-{version}.jar [options]
+    java -jar Alohomora-client-[version].jar [options]
     ```
    
    Make sure you have the [Prerequisites](#prerequisites) installed.
@@ -68,8 +73,8 @@ That's why!
 
 ## Prerequisites
 
-- Java Development Kit (JDK 21 or later)
-- Maven (for building the project)
+- Java Development Kit (JDK 21 or later) (For compiling and running)
+- JRE (JDK21 compatible) **(If you're downloading from releases)**
 
 ## License
 
