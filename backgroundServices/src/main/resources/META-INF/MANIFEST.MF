@@ -1,0 +1,2 @@
+Manifest-Version: 0.2.0
+Main-Class: io.dayfit.github.backgroundServices.BackgroundApplication

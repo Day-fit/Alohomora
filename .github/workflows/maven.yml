@@ -19,17 +19,20 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-
+          token: ${{ secrets.GITHUB_TOKEN }}
+    
+      - name: Set Executable Permissions
+        run: chmod +x mvnw
+    
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-
+    
       - name: Test with Maven
-        run: mvn test
+        run: ./mvnw test
 
       - name: Update Dependency Graph
         uses: advanced-security/maven-dependency-submission-action@v4
@@ -69,7 +72,7 @@ jobs:
             This is the release of Alohomora version ${{ github.ref_name }}.
             The JAR files are attached below. (client and background)
           files: |
-            target/Alohomora-*-client.jar
-            target/Alohomora-*-background.jar
+            backgroundServices/target/Alohomora-client-*.jar
+            clientApp/target/Alohomora-background-*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
