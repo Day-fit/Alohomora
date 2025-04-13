@@ -72,7 +72,7 @@ jobs:
             This is the release of Alohomora version ${{ github.ref_name }}.
             The JAR files are attached below. (client and background)
           files: |
-            backgroundServices/target/Alohomora-client-*.jar
-            clientApp/target/Alohomora-background-*.jar
+            clientApp/target/Alohomora-client-*.jar
+            backgroundServices/target/Alohomora-background-*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
