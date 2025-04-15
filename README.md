@@ -6,8 +6,12 @@ Alohomora is a Java-based application designed to help you manage your files by 
 
 - Encrypt Files or Directories: Secure your sensitive data by encrypting individual files or entire directories.
 - Decrypt Files or Directories: Access your protected data by decrypting previously secured files or directories.
+- **Encryption on close**: Protected paths are encrypted on closing the device.
+  
 - **Planned Features**:
     - Enhanced security measures, including improved hashing algorithms and salted hashes.
+    - UI Client (based on JavaFX)
+    - Instalator + native binary for Linux and Windows (GraalVM)
 
 ## Installation (from releases)
 1. Look for the **latest release** at [releases](https://github.com/Day-fit/Alohomora/releases), and download the jar file
